@@ -76,7 +76,7 @@ The benchmark runs with the following production-like parameters:
 ## 📈 Run Result
 
 ```
-(wundergraph-grpc-benchmark) C:\data\apps\wundergraph-grpc-benchmark>python benchmark.py
+(graphql-grpc-benchmark) C:\data\apps\graphql-grpc-benchmark>python benchmark.py
 Starting automated benchmark scenario using Docker Compose services...
 
 --- Benchmarking WunderGraph (GraphQL) ---

@@ -1,0 +1,6 @@
+aiohttp
+grpcio
+grpcio-tools
+numpy
+matplotlib
+seaborn

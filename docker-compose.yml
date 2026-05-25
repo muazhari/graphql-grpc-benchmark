@@ -1,0 +1,27 @@
+services:
+  grpc_backend:
+    build:
+      context: grpc_service
+      dockerfile: Dockerfile
+    ports:
+      - "50051:50051"
+
+  wundergraph_subgraph:
+    build:
+      context: wundergraph_service/subgraph
+      dockerfile: Dockerfile
+    ports:
+      - "4000:4000"
+
+  wundergraph_router:
+    image: ghcr.io/wundergraph/cosmo/router:latest
+    ports:
+      - "3002:3002"
+    working_dir: /app
+    env_file:
+      - ./.env
+    volumes:
+      - ./wundergraph_service/router:/app
+    depends_on:
+      - grpc_backend
+      - wundergraph_subgraph

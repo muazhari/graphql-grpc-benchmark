@@ -1,0 +1,7 @@
+[project]
+name = "graphql-grpc-benchmark"
+version = "0.1.0"
+description = "Evaluate latency and throughput of graphql federation vs grpc."
+readme = "README.md"
+requires-python = ">=3.14"
+dependencies = []
