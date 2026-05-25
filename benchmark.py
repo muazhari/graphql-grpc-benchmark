@@ -2,6 +2,7 @@ import asyncio
 import sys
 import os
 
+import uuid
 import time
 import numpy as np
 import matplotlib.pyplot as plt
@@ -50,9 +51,8 @@ class BenchmarkTarget:
         raise NotImplementedError
 
 class GraphQLTarget(BenchmarkTarget):
-    def __init__(self, endpoint: str, query: str):
+    def __init__(self, endpoint: str):
         self.endpoint = endpoint
-        self.query = query
         self.session = None
 
     async def setup(self):
@@ -66,7 +66,7 @@ class GraphQLTarget(BenchmarkTarget):
 
     async def make_request(self) -> bool:
         try:
-            async with self.session.post(self.endpoint, json={'query': self.query}, headers={'Content-Type': 'application/json'}, timeout=5) as resp:
+            async with self.session.post(self.endpoint, json={'query': f"query {{ users_GetUser(id: \"{uuid.uuid4()}\") {{ id name }} }}"}, headers={'Content-Type': 'application/json'}, timeout=5) as resp:
                 await resp.read()
                 return resp.status == 200
         except Exception:
@@ -88,7 +88,7 @@ class GrpcTarget(BenchmarkTarget):
 
     async def make_request(self) -> bool:
         try:
-            request = users_pb2.UserRequest(id="1")
+            request = users_pb2.UserRequest(id=str(uuid.uuid4()))
             await self.stub.GetUser(request)
             return True
         except grpc.RpcError:
@@ -194,7 +194,7 @@ def interpret_results(graphql_res: BenchmarkResult, grpc_res: BenchmarkResult):
     if grpc_res.throughput > graphql_res.throughput:
         print("- INTERPRETATION: As expected in typical microservice architectures, gRPC provides higher raw throughput due to HTTP/2 multiplexing, lighter binary framing (Protobuf), and reduced serialization/deserialization CPU overhead compared to JSON over HTTP.")
     else:
-        print("- INTERPRETATION: Interestingly, WunderGraph achieved comparable or higher throughput. This might be due to effective edge caching, optimized Go-based request batching, or a scenario where JSON parsing isn't the primary bottleneck.")
+        print("- INTERPRETATION: Interestingly, WunderGraph achieved comparable or higher throughput. This might be due to optimized Go-based request batching or a scenario where JSON parsing isn't the primary bottleneck.")
 
     # Latency Analysis
     gql_p99 = graphql_res.percentiles()['p99']
@@ -213,7 +213,7 @@ def interpret_results(graphql_res: BenchmarkResult, grpc_res: BenchmarkResult):
     print("\n3. Production Context Caveats:")
     print("- Payload size: If you transport large arrays, Protobuf's binary nature outclasses HTTP JSON.")
     print("- Browser usage: WunderGraph handles cross-origin and web-friendly JSON out of the box, whereas gRPC requires grpc-web proxies.")
-    print("- Recommendation: Use gRPC for high-intensity internal server-to-server traffic. Use WunderGraph if aggregating multiple external APIs to frontend applications with caching needs.")
+    print("- Recommendation: Use gRPC for high-intensity internal server-to-server traffic. Use WunderGraph if aggregating multiple external APIs to frontend applications.")
     print("="*50 + "\n")
 
 async def main():
@@ -225,7 +225,7 @@ async def main():
     # =========================================================================
     # CONFIGURE REAL TARGETS HERE
     # =========================================================================
-    target_graphql = GraphQLTarget("http://localhost:3002/graphql", "query { users_GetUser(id: \"1\") { id name } }")
+    target_graphql = GraphQLTarget("http://localhost:3002/graphql")
     target_grpc = GrpcTarget("localhost:50051")
     
     print("Starting automated benchmark scenario using Docker Compose services...")

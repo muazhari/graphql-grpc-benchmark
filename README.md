@@ -82,14 +82,14 @@ Starting automated benchmark scenario using Docker Compose services...
 --- Benchmarking WunderGraph (GraphQL) ---
 [WunderGraph (GraphQL)] Warming up for 3.0 seconds...
 [WunderGraph (GraphQL)] Running benchmark for 10.0 seconds with concurrency=100...
-[WunderGraph (GraphQL)] Done! Throughput: 4417.98 req/sec
-[WunderGraph (GraphQL)] Latency - p50: 21.68ms | p90: 27.22ms | p99: 35.50ms
+[WunderGraph (GraphQL)] Done! Throughput: 3175.02 req/sec
+[WunderGraph (GraphQL)] Latency - p50: 29.82ms | p90: 37.69ms | p99: 66.81ms
 
 --- Benchmarking gRPC (Direct) ---
 [gRPC (Direct)] Warming up for 3.0 seconds...
 [gRPC (Direct)] Running benchmark for 10.0 seconds with concurrency=100...
-[gRPC (Direct)] Done! Throughput: 2243.02 req/sec
-[gRPC (Direct)] Latency - p50: 43.07ms | p90: 49.68ms | p99: 75.12ms
+[gRPC (Direct)] Done! Throughput: 2162.34 req/sec
+[gRPC (Direct)] Latency - p50: 43.63ms | p90: 53.97ms | p99: 77.10ms
 
 [+] Created configuration charts: benchmark_comparison.png
 
@@ -98,12 +98,12 @@ Starting automated benchmark scenario using Docker Compose services...
 ==================================================
 
 1. Throughput (Capacity):
-- WunderGraph (GraphQL) achieved higher throughput by 49.2%.
-- INTERPRETATION: Interestingly, WunderGraph achieved comparable or higher throughput. This might be due to effective edge caching, optimized Go-based request batching, or a scenario where JSON parsing isn't the primary bottleneck.
+- WunderGraph (GraphQL) achieved higher throughput by 31.9%.
+- INTERPRETATION: Interestingly, WunderGraph achieved comparable or higher throughput. This might be due to optimized Go-based request batching or a scenario where JSON parsing isn't the primary bottleneck.
 
 2. Tail Latency (p99):
-- WunderGraph (GraphQL) p99: 35.50 ms
-- gRPC (Direct) p99: 75.12 ms
+- WunderGraph (GraphQL) p99: 66.81 ms
+- gRPC (Direct) p99: 77.10 ms
 - WunderGraph (GraphQL) had better tail latency.
 - INTERPRETATION: While p50 represents typical user experience, p99 is crucial for backend systems (handling outlier complex queries).
   gRPC traditionally excels here by avoiding large JSON payload parsing garbage collection pauses.
@@ -112,7 +112,7 @@ Starting automated benchmark scenario using Docker Compose services...
 3. Production Context Caveats:
 - Payload size: If you transport large arrays, Protobuf's binary nature outclasses HTTP JSON.
 - Browser usage: WunderGraph handles cross-origin and web-friendly JSON out of the box, whereas gRPC requires grpc-web proxies.
-- Recommendation: Use gRPC for high-intensity internal server-to-server traffic. Use WunderGraph if aggregating multiple external APIs to frontend applications with caching needs.
+- Recommendation: Use gRPC for high-intensity internal server-to-server traffic. Use WunderGraph if aggregating multiple external APIs to frontend applications.
 ==================================================
 ```
 
@@ -120,6 +120,6 @@ Starting automated benchmark scenario using Docker Compose services...
 
 ## 🏆 Verdict
 
-WunderGraph Cosmo's GraphQL Federation wins!
+WunderGraph Cosmo's GraphQL Federation wins! 
 
-This benchmark demonstrates that while gRPC is often touted for its raw performance, WunderGraph Cosmo's intelligent caching and optimized routing can yield competitive or even superior results in real-world scenarios. The choice between them should be guided by your specific use case, payload characteristics, and architectural needs.
+This benchmark demonstrates that a federated GraphQL gateway can achieve competitive performance against direct gRPC communication, while offering greater flexibility and ease of integration for backend-to-backend and backend-to-frontend applications. The choice between the two should be guided by specific use cases, payload characteristics, and architectural preferences.
