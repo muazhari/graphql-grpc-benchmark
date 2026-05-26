@@ -173,6 +173,10 @@ def plot_results(results: List[BenchmarkResult]):
     ax2.set_ylabel("Latency (ms)")
     ax2.set_xticks(x)
     ax2.set_xticklabels(names)
+    ax2.bar_label(ax2.containers[0], fmt='%.1f')
+    ax2.bar_label(ax2.containers[1], fmt='%.1f')
+    ax2.bar_label(ax2.containers[2], fmt='%.1f')
+    ax2.bar_label(ax2.containers[3], fmt='%.1f')
     ax2.legend()
     
     plt.tight_layout()
@@ -213,7 +217,7 @@ def interpret_results(graphql_res: BenchmarkResult, grpc_res: BenchmarkResult):
     print("\n3. Production Context Caveats:")
     print("- Payload size: If you transport large arrays, Protobuf's binary nature outclasses HTTP JSON.")
     print("- Browser usage: WunderGraph handles cross-origin and web-friendly JSON out of the box, whereas gRPC requires grpc-web proxies.")
-    print("- Recommendation: Use gRPC for high-intensity internal server-to-server traffic. Use WunderGraph if aggregating multiple external APIs to frontend applications.")
+    print("- Recommendation: Use gRPC for high-intensity internal server-to-server traffic. Use WunderGraph if aggregating multiple APIs from many applications.")
     print("="*50 + "\n")
 
 async def main():

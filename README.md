@@ -82,14 +82,14 @@ Starting automated benchmark scenario using Docker Compose services...
 --- Benchmarking WunderGraph (GraphQL) ---
 [WunderGraph (GraphQL)] Warming up for 3.0 seconds...
 [WunderGraph (GraphQL)] Running benchmark for 10.0 seconds with concurrency=100...
-[WunderGraph (GraphQL)] Done! Throughput: 3175.02 req/sec
-[WunderGraph (GraphQL)] Latency - p50: 29.82ms | p90: 37.69ms | p99: 66.81ms
+[WunderGraph (GraphQL)] Done! Throughput: 3202.80 req/sec
+[WunderGraph (GraphQL)] Latency - p50: 29.68ms | p90: 37.14ms | p99: 53.73ms
 
 --- Benchmarking gRPC (Direct) ---
 [gRPC (Direct)] Warming up for 3.0 seconds...
 [gRPC (Direct)] Running benchmark for 10.0 seconds with concurrency=100...
-[gRPC (Direct)] Done! Throughput: 2162.34 req/sec
-[gRPC (Direct)] Latency - p50: 43.63ms | p90: 53.97ms | p99: 77.10ms
+[gRPC (Direct)] Done! Throughput: 2274.21 req/sec
+[gRPC (Direct)] Latency - p50: 42.61ms | p90: 48.38ms | p99: 72.12ms
 
 [+] Created configuration charts: benchmark_comparison.png
 
@@ -98,12 +98,12 @@ Starting automated benchmark scenario using Docker Compose services...
 ==================================================
 
 1. Throughput (Capacity):
-- WunderGraph (GraphQL) achieved higher throughput by 31.9%.
+- WunderGraph (GraphQL) achieved higher throughput by 29.0%.
 - INTERPRETATION: Interestingly, WunderGraph achieved comparable or higher throughput. This might be due to optimized Go-based request batching or a scenario where JSON parsing isn't the primary bottleneck.
 
 2. Tail Latency (p99):
-- WunderGraph (GraphQL) p99: 66.81 ms
-- gRPC (Direct) p99: 77.10 ms
+- WunderGraph (GraphQL) p99: 53.73 ms
+- gRPC (Direct) p99: 72.12 ms
 - WunderGraph (GraphQL) had better tail latency.
 - INTERPRETATION: While p50 represents typical user experience, p99 is crucial for backend systems (handling outlier complex queries).
   gRPC traditionally excels here by avoiding large JSON payload parsing garbage collection pauses.
@@ -112,7 +112,7 @@ Starting automated benchmark scenario using Docker Compose services...
 3. Production Context Caveats:
 - Payload size: If you transport large arrays, Protobuf's binary nature outclasses HTTP JSON.
 - Browser usage: WunderGraph handles cross-origin and web-friendly JSON out of the box, whereas gRPC requires grpc-web proxies.
-- Recommendation: Use gRPC for high-intensity internal server-to-server traffic. Use WunderGraph if aggregating multiple external APIs to frontend applications.
+- Recommendation: Use gRPC for high-intensity internal server-to-server traffic. Use WunderGraph if aggregating multiple APIs from many applications.
 ==================================================
 ```
 
